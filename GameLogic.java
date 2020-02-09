@@ -19,33 +19,56 @@ import java.util.Scanner;
  */
 
 public class GameLogic {
-
-	public static void readTurns(String fileName) throws Exception {
+	
+	private static int startPull;
+	
+	public static int countTurns(String fileName) throws Exception {
 		System.out.println(fileName);
 		BufferedReader reader = new BufferedReader(new FileReader(fileName));
 		int turns = 0;
-		while (reader.readLine() != null) {
-			turns++;
-			System.out.println(turns);
-		}
+		while (reader.readLine() != null) turns++;
 		reader.close();
+		return turns;
+	}
+	
+	public static Game readTurns(String fileName) throws Exception {
+		Game newGame = new Game();
 		Scanner sc = new Scanner(new BufferedReader(new FileReader(fileName)));
-		int [][] turnsArray = new int[turns][6];
+		int turns = countTurns(fileName);
 		for (int i=0; i<turns; i++) {
 			String[] line = sc.nextLine().trim().split(",");
-			for (int j=0; j<5; j++) {
-				turnsArray[i][j] = Integer.parseInt(line[j]);
-				if (turnsArray[i][4]>0) {
-					System.out.println("Turn "+i+" has "+turnsArray[i][4]+" capture(s).");
-				}
-			}
-			
+			newGame.addTurn(readTurn(line));
 		}
 		sc.close();
-		System.out.println(Arrays.deepToString(turnsArray));
+		return newGame;
 	}
 
+	public static Turn readTurn(String[] line) {
+		int x = Integer.parseInt(line[0]);
+		int y = Integer.parseInt(line[1]);
+		int color = Integer.parseInt(line[2]);
+		int code = Integer.parseInt(line[3]);
+		int captures = Integer.parseInt(line[4]);
+		if (captures > 0) {
+			Location [] capStones = new Location [captures];
+			startPull = 5;
+			for (int cap = 0; cap < captures;cap++) {
+				capStones[cap]= new Location(Integer.parseInt(line[startPull]),Integer.parseInt(line[startPull+1]));
+				startPull +=2;
+			}
+			Turn newTurn = new Turn(x, y, color, code, captures, capStones);
+			System.out.print(newTurn.toString());
+			return newTurn;
+		}
+		else {
+			Turn newTurn = new Turn(x, y, color, code);
+			System.out.print(newTurn.toString());
+			return newTurn;
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
-		readTurns("teachingGame.txt");
+		Game newGame = readTurns("teachingGame.txt");
+		System.out.println("\nTurns read: "+ newGame.size());
 	}
 }
