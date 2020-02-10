@@ -46,7 +46,9 @@ public class GoBoard extends JPanel {
     // OOP Integration
     // Signify and store new captures
     boolean newCaptures = false;
+    // must use ArrayList because variable length
 	ArrayList<Location> newCapStones = new ArrayList<Location>();
+	// must reference a game to add turns to
     Game newGame = new Game();
     
     public GoBoard(JFrame frame) {
@@ -86,11 +88,12 @@ public class GoBoard extends JPanel {
 		    	return;
 		    // Right Click
 		    if(e.getButton() == MouseEvent.BUTTON3) {
-		    	// Shift: remove a stone, replace with red, add to captures and newCapStones
+		    	// Shift: remove a stone, replace with red, add to captures and to newCapStones
 		    	if (modifiersEx==64) {
 		    		board[y][x]=-1;
 		    		Location newLoc = new Location(x,y);
 		    		newCapStones.add(newLoc);
+		    		//System.out.println(newCapStones.toString());
 		    		captures++;
 		    	}
 		    	// Remove a stone, take a different turn
@@ -109,20 +112,19 @@ public class GoBoard extends JPanel {
 		    	}
 		    	// there are captures
 		    	else {
-		    		Location [] capStones = new Location [captures];
-		    		capStones = newCapStones.toArray(capStones);
-		    		Turn newTurn = new Turn(x,y,color,1,captures,capStones);
+		    		System.out.println(captures+" captures: "+newCapStones.toString());
+		    		Location [] theseCapStones = new Location [captures];
+		    		theseCapStones = newCapStones.toArray(theseCapStones);
+		    		Turn newTurn = new Turn(x,y,color,1,captures,theseCapStones);
 		    		newGame.addTurn(newTurn);
 		    		System.out.println(newTurn.toString());
+		    		//captures=0;
+		    		//newCapStones.clear();
 		    	}
 		    	System.out.println("Game: \n"+newGame.toString());
 		    }
 		    //Left-Click: Set up a Turn
 		    else if (board[y][x] == 0) {
-		    	if (captures > 0) {
-		    		captures=0;
-		    		newCapStones.clear();
-		    	}
 		    	board[y][x] = ++moveCount;
 			    color=(moveCount-1)%2+1;
 		    }
