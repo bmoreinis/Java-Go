@@ -45,6 +45,8 @@ public class GoBoard extends JPanel {
     int borderOffset;
     boolean newCaptures = false;
 	ArrayList<String> capStones = new ArrayList<String>();
+    int color=0;
+    Game newGame = new Game();
     
     public GoBoard(JFrame frame) {
 	board = new int[boardSize][boardSize];
@@ -78,8 +80,8 @@ public class GoBoard extends JPanel {
 				  squareSize);
 		    int y = (int)((e.getY()-centerOffset-borderOffset)/
 				  squareSize);
-		    if (x < 0 || x > boardSize || y < 0 ||y > boardSize)
-			return;
+		    if (x < 0 || x > boardSize || y < 0 ||y > boardSize) 
+		    	return;
 		    if(e.getButton() == MouseEvent.BUTTON3) {
 		    	if (modifiersEx==64) {
 		    		board[y][x]=-1;
@@ -91,12 +93,19 @@ public class GoBoard extends JPanel {
 			    	moveCount--;
 		    	}
 		    }
+		    else if (modifiersEx==64) {
+		    	System.out.println("Game: \n"+newGame.toString());
+		    }
 		    else if (board[y][x] == 0) {
 		    	if (newCaptures = true) {
 		    		newCaptures = false;
 		    		capStones.clear();
 		    	}
 		    	board[y][x] = ++moveCount;
+			    color=(moveCount-1)%2+1;
+	    		Turn newTurn = new Turn(x,y,color);
+	    		newGame.addTurn(newTurn);
+	    		System.out.println(newTurn.toString());
 		    }
 		    repaint();
 		}});

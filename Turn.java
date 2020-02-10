@@ -1,4 +1,7 @@
 package GoBoard;
+
+import java.awt.List;
+
 /** 
  * Represents a turn in Go
  * @author Bram
@@ -12,7 +15,8 @@ public class Turn {
 	private Location [] capStones;
 	private int code;
 	private int captures;
-	
+	int turn;
+	static int nextTurn = 0;
 	private void repOK() {
 		// Location must be inside board
 		assert(coordinates.x <= 9 && coordinates.y <= 9);
@@ -20,6 +24,10 @@ public class Turn {
 		assert(stone=="w" || stone=="b");
 	}
 
+	public Turn(int x, int y, int color) {
+		this(x,y,color,0,0,null);
+	}
+	
 	public Turn(int x, int y, int color, int code) {
 		this(x,y,color,code,0,null);
 	}
@@ -34,6 +42,10 @@ public class Turn {
 		this.code = code;
 		this.captures = captures;
 		this.capStones = capStones;
+		repOK();
+		this.turn=nextTurn;
+		repOK();
+		nextTurn++;
 	}
 	
 	public Location getCoords() {

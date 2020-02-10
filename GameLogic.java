@@ -48,10 +48,10 @@ public class GameLogic {
 		int y = Integer.parseInt(line[1]);
 		int color = Integer.parseInt(line[2]);
 		int code = Integer.parseInt(line[3]);
-		int captures = Integer.parseInt(line[4]);
-		if (captures > 0) {
+		if (line.length>4) {
+			int captures = (line.length-4)/2;
 			Location [] capStones = new Location [captures];
-			startPull = 5;
+			startPull = 4;
 			for (int cap = 0; cap < captures;cap++) {
 				capStones[cap]= new Location(Integer.parseInt(line[startPull]),Integer.parseInt(line[startPull+1]));
 				startPull +=2;
