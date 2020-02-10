@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Dimension;
+import java.awt.event.InputEvent;
 
 public class GoBoard extends JPanel {
     // The board is always square, size of the board on a side
@@ -70,7 +71,13 @@ public class GoBoard extends JPanel {
 				  squareSize);
 		    if (x < 0 || x > boardSize || y < 0 ||y > boardSize)
 			return;
-		    if (board[y][x] == 0) board[y][x] = ++moveCount;
+		    if(e.getButton() == MouseEvent.BUTTON3) {
+		    	board[y][x]=0;
+		    	moveCount--;
+		    }
+		    else if (board[y][x] == 0) {
+		    	board[y][x] = ++moveCount;
+		    }
 		    repaint();
 		}});
 	
