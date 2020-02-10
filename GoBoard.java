@@ -15,23 +15,21 @@ import java.awt.Dimension;
 import java.awt.event.InputEvent;
 
 public class GoBoard extends JPanel {
-    /**
-	 * 
-	 */
+	// constants
 	private static final long serialVersionUID = 1L;
-	// The board is always square, size of the board on a side
     static final int boardPixelSize = 400;
     static final int boardSize = 9;
     static final Dimension preferredSize = new Dimension(420,440);
     
     // internal variables
-    int board[][]; // 9x9 board, each square: { 'b', 'w', 'e' }
+    int board[][]; // 9x9 board
     // black always goes first.
     public static char lastMove = 'w';
     static int moveCount = 0; 
+    int color=0;
+    int captures=0;
 
     // --- Computed values ---
-
     // Everything is square, but this is computed so that we know where
     // to place stones so that they fall on the intersections of the 
     // board.
@@ -43,9 +41,12 @@ public class GoBoard extends JPanel {
     // The borderOffset is what you must add to all values to get the right 
     // position on the board, because of the ghost column that is the border.
     int borderOffset;
+
+    
+    // OOP Integration
+    // Signify and store new captures
     boolean newCaptures = false;
-	ArrayList<String> capStones = new ArrayList<String>();
-    int color=0;
+	ArrayList<Location> newCapStones = new ArrayList<Location>();
     Game newGame = new Game();
     
     public GoBoard(JFrame frame) {
@@ -73,6 +74,7 @@ public class GoBoard extends JPanel {
 	    }
 	}
 	
+	// Respond to mouse events
 	frame.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
 			int modifiersEx = e.getModifiersEx();
@@ -80,36 +82,52 @@ public class GoBoard extends JPanel {
 				  squareSize);
 		    int y = (int)((e.getY()-centerOffset-borderOffset)/
 				  squareSize);
-		    if (x < 0 || x > boardSize || y < 0 ||y > boardSize) 
+		    if (x < 0 || x > boardSize || y < 0 || y > boardSize) 
 		    	return;
+		    // Right Click
 		    if(e.getButton() == MouseEvent.BUTTON3) {
+		    	// Shift: remove a stone, replace with red, add to captures and newCapStones
 		    	if (modifiersEx==64) {
 		    		board[y][x]=-1;
-		    		capStones.add("["+x+", "+y+"]");
-		    		newCaptures = true;
+		    		Location newLoc = new Location(x,y);
+		    		newCapStones.add(newLoc);
+		    		captures++;
 		    	}
+		    	// Remove a stone, take a different turn
 		    	else {
 		    		board[y][x]=0;
 			    	moveCount--;
 		    	}
 		    }
+		   // Left-Click + Shift: Save a turn
 		    else if (modifiersEx==64) {
+		    	// there are no captures
+		    	if (captures==0) {
+			    	Turn newTurn = new Turn(x,y,color);
+			    	newGame.addTurn(newTurn);
+			    	System.out.println(newTurn.toString());
+		    	}
+		    	// there are captures
+		    	else {
+		    		Location [] capStones = new Location [captures];
+		    		capStones = newCapStones.toArray(capStones);
+		    		Turn newTurn = new Turn(x,y,color,1,captures,capStones);
+		    		newGame.addTurn(newTurn);
+		    		System.out.println(newTurn.toString());
+		    	}
 		    	System.out.println("Game: \n"+newGame.toString());
 		    }
+		    //Left-Click: Set up a Turn
 		    else if (board[y][x] == 0) {
-		    	if (newCaptures = true) {
-		    		newCaptures = false;
-		    		capStones.clear();
+		    	if (captures > 0) {
+		    		captures=0;
+		    		newCapStones.clear();
 		    	}
 		    	board[y][x] = ++moveCount;
 			    color=(moveCount-1)%2+1;
-	    		Turn newTurn = new Turn(x,y,color);
-	    		newGame.addTurn(newTurn);
-	    		System.out.println(newTurn.toString());
 		    }
 		    repaint();
 		}});
-	
     }
 
     public Dimension getPrefferedSize() {
@@ -132,24 +150,24 @@ public class GoBoard extends JPanel {
 		       borderOffset+(boardSize-1)*squareSize);
 	}
 	// this repaints the board from the array, placing stones based on the turn sequence, with black first.      
-	System.out.print(Arrays.deepToString(board));
-	System.out.println();
-	System.out.println("================");
-	if (capStones.size()>0) System.out.println(capStones.toString());
-		for (int i = 0; i < boardSize; i++) {
-		    for (int j = 0; j < boardSize; j++) {
-				if (board[i][j] != 0) {
-				    if (board[i][j]%2==1) {
-				    	g.setColor(Color.black);
-				    } else if (board[i][j]%2==0) {
-				    	g.setColor(Color.white);
-				    } else if (board[i][j]==-1) {
-						g.setColor(Color.red);
-						board[i][j]=0;
-				    }
-				    g.fillOval(borderOffset+j*squareSize-centerOffset,
-					       borderOffset+i*squareSize-centerOffset, 
-					       stoneSize, stoneSize);
+	//System.out.print(Arrays.deepToString(board));
+	//System.out.println();
+	//System.out.println("================");
+	//if (captures>0) System.out.println(newCapStones.toString());
+	for (int i = 0; i < boardSize; i++) {
+	    for (int j = 0; j < boardSize; j++) {
+			if (board[i][j] != 0) {
+			    if (board[i][j]%2==1) {
+			    	g.setColor(Color.black);
+			    } else if (board[i][j]%2==0) {
+			    	g.setColor(Color.white);
+			    } else if (board[i][j]==-1) {
+					g.setColor(Color.red);
+					board[i][j]=0;
+			    }
+			    g.fillOval(borderOffset+j*squareSize-centerOffset,
+				       borderOffset+i*squareSize-centerOffset, 
+				       stoneSize, stoneSize);
 				} 
 		    }
 		}
