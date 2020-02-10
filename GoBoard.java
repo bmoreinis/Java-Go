@@ -13,7 +13,11 @@ import java.awt.Dimension;
 import java.awt.event.InputEvent;
 
 public class GoBoard extends JPanel {
-    // The board is always square, size of the board on a side
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	// The board is always square, size of the board on a side
     static final int boardPixelSize = 400;
     static final int boardSize = 9;
     static final Dimension preferredSize = new Dimension(420,440);
@@ -37,6 +41,7 @@ public class GoBoard extends JPanel {
     // The borderOffset is what you must add to all values to get the right 
     // position on the board, because of the ghost column that is the border.
     int borderOffset;
+    boolean captureClicks;
     
     public GoBoard(JFrame frame) {
 	board = new int[boardSize][boardSize];
@@ -65,6 +70,7 @@ public class GoBoard extends JPanel {
 	
 	frame.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
+			int modifiersEx = e.getModifiersEx();
 		    int x = (int)((e.getX()-centerOffset)/
 				  squareSize);
 		    int y = (int)((e.getY()-centerOffset-borderOffset)/
@@ -72,8 +78,15 @@ public class GoBoard extends JPanel {
 		    if (x < 0 || x > boardSize || y < 0 ||y > boardSize)
 			return;
 		    if(e.getButton() == MouseEvent.BUTTON3) {
-		    	board[y][x]=0;
-		    	moveCount--;
+		    	if (modifiersEx==64) {
+		    		board[y][x]=-1;
+		    		captureClicks=true;
+		    	}
+		    	else {
+		    		board[y][x]=0;
+		    		captureClicks=false;
+			    	moveCount--;
+		    	}
 		    }
 		    else if (board[y][x] == 0) {
 		    	board[y][x] = ++moveCount;
@@ -105,20 +118,24 @@ public class GoBoard extends JPanel {
 	// this repaints the board from the array, placing stones based on the turn sequence, with black first.      
 	System.out.println("================");
 	System.out.print(Arrays.deepToString(board));
-	for (int i = 0; i < boardSize; i++) {
-	    for (int j = 0; j < boardSize; j++) {
-		if (board[i][j] != 0) {
-		    if (board[i][j]%2==1) {
-			g.setColor(Color.black);
-		    } else if (board[i][j]%2==0) {
-			g.setColor(Color.white);
+		for (int i = 0; i < boardSize; i++) {
+		    for (int j = 0; j < boardSize; j++) {
+				if (board[i][j] != 0) {
+				    if (board[i][j]%2==1) {
+				    	g.setColor(Color.black);
+				    } else if (board[i][j]%2==0) {
+				    	g.setColor(Color.white);
+				    } else if (board[i][j]==-1) {
+						g.setColor(Color.red);
+						board[i][j]=0;
+				    }
+				    g.fillOval(borderOffset+j*squareSize-centerOffset,
+					       borderOffset+i*squareSize-centerOffset, 
+					       stoneSize, stoneSize);
+				} 
 		    }
-		    g.fillOval(borderOffset+j*squareSize-centerOffset,
-			       borderOffset+i*squareSize-centerOffset, 
-			       stoneSize, stoneSize);
-		} 
-	    }
-	}
+			captureClicks=false;
+		}
     }
     
     public static void main(String args[]) {
