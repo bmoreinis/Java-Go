@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.List;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 
 public class GoBoard extends JPanel {
@@ -112,14 +113,21 @@ public class GoBoard extends JPanel {
 		    	}
 		    	// there are captures
 		    	else {
-		    		System.out.println(captures+" captures: "+newCapStones.toString());
+		    		//System.out.println(captures+" captures: "+newCapStones.toString());
 		    		Location [] theseCapStones = new Location [captures];
 		    		theseCapStones = newCapStones.toArray(theseCapStones);
-		    		Turn newTurn = new Turn(x,y,color,1,captures,theseCapStones);
-		    		newGame.addTurn(newTurn);
-		    		System.out.println(newTurn.toString());
-		    		//captures=0;
-		    		//newCapStones.clear();
+		    		if (TextPane.nameText.getText() == "Message") {
+			    		Turn newTurn = new Turn(x,y,color,1,captures,theseCapStones);
+			    		newGame.addTurn(newTurn);
+			    		System.out.println(newTurn.toString());
+		    		}
+		    		else {
+		    			String message=TextPane.nameText.getText();
+			    		Turn newTurn = new Turn(x,y,color,1,captures,theseCapStones,message);
+			    		newGame.addTurn(newTurn);
+			    		System.out.println(newTurn.toString());
+			    		TextPane.answerField.setText(newTurn.toString());
+		    		}
 		    	}
 		    	System.out.println("Game: \n"+newGame.toString());
 		    }
@@ -176,15 +184,25 @@ public class GoBoard extends JPanel {
     }
     
     public static void main(String args[]) {
-	JFrame frame = new JFrame("Go Board");
-	GoBoard t = new GoBoard(frame);
-	frame.addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		    System.exit(0);
-		}});
-	frame.getContentPane().add(t);
-	frame.setSize(preferredSize);
-	
-	frame.setVisible(true);
+		JFrame frame = new JFrame("Go Board");
+		GoBoard t = new GoBoard(frame);
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+			    System.exit(0);
+			}});
+		frame.getContentPane().add(t);
+		frame.setSize(preferredSize);
+		frame.setVisible(true);
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					TextPane window = new TextPane();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
     }
 }
