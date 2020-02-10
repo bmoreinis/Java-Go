@@ -5,10 +5,12 @@ import javax.swing.JPanel;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.awt.event.WindowAdapter;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.List;
 import java.awt.Dimension;
 import java.awt.event.InputEvent;
 
@@ -41,7 +43,8 @@ public class GoBoard extends JPanel {
     // The borderOffset is what you must add to all values to get the right 
     // position on the board, because of the ghost column that is the border.
     int borderOffset;
-    boolean captureClicks;
+    boolean newCaptures = false;
+	ArrayList<String> capStones = new ArrayList<String>();
     
     public GoBoard(JFrame frame) {
 	board = new int[boardSize][boardSize];
@@ -80,15 +83,19 @@ public class GoBoard extends JPanel {
 		    if(e.getButton() == MouseEvent.BUTTON3) {
 		    	if (modifiersEx==64) {
 		    		board[y][x]=-1;
-		    		captureClicks=true;
+		    		capStones.add("["+x+", "+y+"]");
+		    		newCaptures = true;
 		    	}
 		    	else {
 		    		board[y][x]=0;
-		    		captureClicks=false;
 			    	moveCount--;
 		    	}
 		    }
 		    else if (board[y][x] == 0) {
+		    	if (newCaptures = true) {
+		    		newCaptures = false;
+		    		capStones.clear();
+		    	}
 		    	board[y][x] = ++moveCount;
 		    }
 		    repaint();
@@ -116,8 +123,10 @@ public class GoBoard extends JPanel {
 		       borderOffset+(boardSize-1)*squareSize);
 	}
 	// this repaints the board from the array, placing stones based on the turn sequence, with black first.      
-	System.out.println("================");
 	System.out.print(Arrays.deepToString(board));
+	System.out.println();
+	System.out.println("================");
+	if (capStones.size()>0) System.out.println(capStones.toString());
 		for (int i = 0; i < boardSize; i++) {
 		    for (int j = 0; j < boardSize; j++) {
 				if (board[i][j] != 0) {
@@ -134,7 +143,6 @@ public class GoBoard extends JPanel {
 					       stoneSize, stoneSize);
 				} 
 		    }
-			captureClicks=false;
 		}
     }
     
