@@ -6,14 +6,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.awt.event.WindowAdapter;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.List;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.event.InputEvent;
 
 public class GoBoard extends JPanel {
 	// constants
@@ -50,7 +47,8 @@ public class GoBoard extends JPanel {
     // must use ArrayList because variable length
 	ArrayList<Location> newCapStones = new ArrayList<Location>();
 	// must reference a game to add turns to
-    Game newGame = new Game();
+    public static Game newGame = new Game();
+    public static Turn newTurn;
     
     public GoBoard(JFrame frame) {
 	board = new int[boardSize][boardSize];
@@ -87,7 +85,7 @@ public class GoBoard extends JPanel {
 				  squareSize);
 		    if (x < 0 || x > boardSize || y < 0 || y > boardSize) 
 		    	return;
-		    // Right Click
+		    // Right Click: change board but don't save a turn.
 		    if(e.getButton() == MouseEvent.BUTTON3) {
 		    	// Shift: remove a stone, replace with red, add to captures and to newCapStones
 		    	if (modifiersEx==64) {
@@ -103,35 +101,23 @@ public class GoBoard extends JPanel {
 			    	moveCount--;
 		    	}
 		    }
-		   // Left-Click + Shift: Save a turn
-		    else if (modifiersEx==64) {
+		   // Left-Click + Shift: Chamber a turn to add to newGame
+		   else if (modifiersEx==64) {
 		    	// there are no captures
 		    	if (captures==0) {
 			    	Turn newTurn = new Turn(x,y,color);
-			    	newGame.addTurn(newTurn);
-			    	System.out.println(newTurn.toString());
+			    	System.out.println("Chambered turn: "+newTurn.toString());
 		    	}
 		    	// there are captures
 		    	else {
 		    		//System.out.println(captures+" captures: "+newCapStones.toString());
 		    		Location [] theseCapStones = new Location [captures];
 		    		theseCapStones = newCapStones.toArray(theseCapStones);
-		    		if (TextPane.nameText.getText() == "Message") {
-			    		Turn newTurn = new Turn(x,y,color,1,captures,theseCapStones);
-			    		newGame.addTurn(newTurn);
-			    		System.out.println(newTurn.toString());
-		    		}
-		    		else {
-		    			String message=TextPane.nameText.getText();
-			    		Turn newTurn = new Turn(x,y,color,1,captures,theseCapStones,message);
-			    		newGame.addTurn(newTurn);
-			    		System.out.println(newTurn.toString());
-			    		TextPane.answerField.setText(newTurn.toString());
-		    		}
+			    	Turn newTurn = new Turn(x,y,color,1,captures,theseCapStones);
+			    	System.out.println("Chambered turn: "+newTurn.toString());
 		    	}
-		    	System.out.println("Game: \n"+newGame.toString());
 		    }
-		    //Left-Click: Set up a Turn
+		    // Left-Click: Set up a Turn
 		    else if (board[y][x] == 0) {
 		    	board[y][x] = ++moveCount;
 			    color=(moveCount-1)%2+1;

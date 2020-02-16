@@ -1,7 +1,5 @@
 package GoBoard;
 
-import java.awt.List;
-
 /** 
  * Represents a turn in Go
  * @author Bram
@@ -15,7 +13,7 @@ public class Turn {
 	private Location [] capStones;
 	private int code;
 	private int captures;
-	private static String message;
+	private String message;
 	int turn;
 	static int nextTurn = 0;
 	private void repOK() {
@@ -26,15 +24,15 @@ public class Turn {
 	}
 
 	public Turn(int x, int y, int color) {
-		this(x,y,color,0,0,null);
+		this(x,y,color,0,0,null,null);
 	}
 	
 	public Turn(int x, int y, int color, int code) {
-		this(x,y,color,code,0,null);
+		this(x,y,color,code,0,null,null);
 	}
 
-	public Turn(int x, int y, int color, int code, int captures) {
-		this(x,y,color,code,0,null);
+	public Turn(int x, int y, int color, int code, String message) {
+		this(x,y,color,code,0,null,message);
 	}
 	
 	public Turn(int x, int y, int color, int code, int captures, Location [] capStones) {
@@ -47,7 +45,7 @@ public class Turn {
 		this.code = code;
 		this.captures = captures;
 		this.capStones = capStones;
-		this.message = message;
+		this.setMessage(message);
 		repOK();
 		this.turn=nextTurn;
 		repOK();
@@ -83,8 +81,16 @@ public class Turn {
 				turnRep+=this.capStones[cap].toString();
 			}
 		}
-		if (this.code>0) turnRep+=" "+message+" ";
+		if (this.code>0) turnRep+=" "+getMessage()+" ";
 		turnRep+="\n";
 		return turnRep;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }
