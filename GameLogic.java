@@ -1,8 +1,6 @@
 package GoBoard;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.util.Arrays;
 import java.util.Scanner;
 /*
  * https://www.tutorialspoint.com/How-to-read-a-2d-array-from-a-file-in-java
@@ -66,6 +64,17 @@ public class GameLogic {
 			return newTurn;
 		}
 	}
+	
+	public static void loadGame(String gamefile) throws Exception {
+		Game newGame = readTurns(gamefile);
+		System.out.println("\nTurns read: "+ newGame.size());
+	}
+	
+
+	public static void saveTurns(String string) {
+		// TODO: Save current game as a text file with name from argument
+	}
+	
 	
 	public static void main(String[] args) throws Exception {
 		Game newGame = readTurns("teachingGame.txt");
