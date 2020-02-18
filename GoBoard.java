@@ -39,16 +39,14 @@ public class GoBoard extends JPanel {
     // The borderOffset is what you must add to all values to get the right 
     // position on the board, because of the ghost column that is the border.
     int borderOffset;
-
-    
     // OOP Integration
     // Signify and store new captures
     boolean newCaptures = false;
     // must use ArrayList because variable length
 	ArrayList<Location> newCapStones = new ArrayList<Location>();
 	// must reference a game to add turns to
-    public static Game newGame = new Game();
-    public static Turn newTurn;
+	public static Turn chambered = new Turn(0,0,0);
+	public static boolean turnChambered = false;
     
     public GoBoard(JFrame frame) {
 	board = new int[boardSize][boardSize];
@@ -83,41 +81,56 @@ public class GoBoard extends JPanel {
 				  squareSize);
 		    int y = (int)((e.getY()-centerOffset-borderOffset)/
 				  squareSize);
-		    if (x < 0 || x > boardSize || y < 0 || y > boardSize) 
-		    	return;
-		    // Right Click: change board but don't save a turn.
+		    // out of bounds
+		    if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
+		    	System.out.println("Out of bounds");
+		    }
+		    // Left click to place
+		    else if (board[y][x] == 0) {
+		    	board[y][x] = ++moveCount;
+			    color=(moveCount-1)%2+1;
+			    System.out.println("Placed "+color+" at location "+x+", "+y);
+		    }
+		    // Right click to remove
 		    if(e.getButton() == MouseEvent.BUTTON3) {
-		    	// Shift: remove a stone, replace with red, add to captures and to newCapStones
-		    	if (modifiersEx==64) {
-		    		board[y][x]=-1;
-		    		Location newLoc = new Location(x,y);
-		    		newCapStones.add(newLoc);
-		    		//System.out.println(newCapStones.toString());
-		    		captures++;
-		    	}
 		    	// Remove a stone, take a different turn
-		    	else {
+		    	if (modifiersEx != 64) {
 		    		board[y][x]=0;
 			    	moveCount--;
 		    	}
-		    }
-		   // Left-Click + Shift: Chamber a turn to add to newGame
-		   else if (modifiersEx==64) {
-		    	// there are no captures
-		    	if (captures==0) {
-			    	Turn newTurn = new Turn(x,y,color);
-			    	System.out.println("Chambered turn: "+newTurn.toString());
+		    	// Shift Added: remove a stone, replace with red, add to captures and to newCapStones
+		    	else if (modifiersEx==64) {
+		    		board[y][x]=-1;
+		    		Location newLoc = new Location(x,y);
+		    		newCapStones.add(newLoc);
+		    		captures++;
 		    	}
+		    }
+		   // Left-Click + Shift: Chamber a turn
+		    else if (modifiersEx==64) {
+		    	Location chamberedCoords = new Location(x,y);
+			    chambered.setCoordinates(chamberedCoords);
+			    chambered.setColor(color);
+			    String message=TextPane.nameText.getText();
 		    	// there are captures
-		    	else {
-		    		//System.out.println(captures+" captures: "+newCapStones.toString());
+		    	if (captures>0){
+		    		chambered.setCaptures(captures);
 		    		Location [] theseCapStones = new Location [captures];
 		    		theseCapStones = newCapStones.toArray(theseCapStones);
-			    	Turn newTurn = new Turn(x,y,color,1,captures,theseCapStones);
-			    	System.out.println("Chambered turn: "+newTurn.toString());
+		    		chambered.setCapStones(theseCapStones);
 		    	}
+	    		// there is a message
+	    		if (!TextPane.nameText.getText().equals(TextPane.defaultMessage))  {
+	    			chambered.setCode(1);
+	    			chambered.setMessage(message);	
+	    			System.out.println("Chambered "+color+" at location "+x+", "+y+" with "+captures+" captures and "+message+" message.");
+	    		}
+	    		else {
+	    			System.out.println("Chambered "+color+" at location "+x+", "+y+" with "+captures+" captures.");
+	    		}
+			    turnChambered=true;
 		    }
-		    // Left-Click: Set up a Turn
+		    //Left-Click: Set up a Turn
 		    else if (board[y][x] == 0) {
 		    	board[y][x] = ++moveCount;
 			    color=(moveCount-1)%2+1;
@@ -169,7 +182,8 @@ public class GoBoard extends JPanel {
 		}
     }
     
-    public static void main(String args[]) {
+    public static void initiallize(Game newGame) {
+    	System.out.println("Accessing in GoBoard ...."+newGame.getAllTurns());
 		JFrame frame = new JFrame("Go Board");
 		GoBoard t = new GoBoard(frame);
 		frame.addWindowListener(new WindowAdapter() {
@@ -183,7 +197,7 @@ public class GoBoard extends JPanel {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TextPane window = new TextPane();
+					TextPane window = new TextPane(newGame);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

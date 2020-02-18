@@ -6,7 +6,7 @@ package GoBoard;
  *
  */
 
-public class Turn {
+public class Turn implements Cloneable {
 	public static final String [] colors = {"e","b","w"};
 	private Location coordinates;
 	private String stone;
@@ -24,15 +24,51 @@ public class Turn {
 	}
 
 	public Turn(int x, int y, int color) {
-		this(x,y,color,0,0,null,null);
+		this(x,y,color,0,0,null);
 	}
 	
 	public Turn(int x, int y, int color, int code) {
-		this(x,y,color,code,0,null,null);
+		this(x,y,color,code,0,null);
+	}
+	
+	 public Turn clone() throws CloneNotSupportedException 
+	{ 
+		 return this.clone(); 
+	} 
+
+	public Location getCoordinates() {
+		return coordinates;
 	}
 
-	public Turn(int x, int y, int color, int code, String message) {
-		this(x,y,color,code,0,null,message);
+	public void setCoordinates(Location coordinates) {
+		this.coordinates = coordinates;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setStone(String stone) {
+		this.stone = stone;
+	}
+	
+	public String setColor(int color) {
+		return colors[color];
+	}
+	public void setCapStones(Location[] capStones) {
+		this.capStones = capStones;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setCaptures(int captures) {
+		this.captures = captures;
+	}
+
+	public Turn(int x, int y, int color, int code, int captures) {
+		this(x,y,color,code,0,null);
 	}
 	
 	public Turn(int x, int y, int color, int code, int captures, Location [] capStones) {
@@ -45,7 +81,7 @@ public class Turn {
 		this.code = code;
 		this.captures = captures;
 		this.capStones = capStones;
-		this.setMessage(message);
+		this.message = message;
 		repOK();
 		this.turn=nextTurn;
 		repOK();
@@ -81,16 +117,12 @@ public class Turn {
 				turnRep+=this.capStones[cap].toString();
 			}
 		}
-		if (this.code>0) turnRep+=" "+getMessage()+" ";
+		if (this.code>0) turnRep+=" "+message+" ";
 		turnRep+="\n";
 		return turnRep;
 	}
 
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
+	public void setMessage(String string) {
+		this.message=string;
 	}
 }
