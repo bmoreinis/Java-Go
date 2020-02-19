@@ -1,21 +1,19 @@
 package GoBoard;
 
-import java.awt.List;
-
 /** 
  * Represents a turn in Go
  * @author Bram
  *
  */
 
-public class Turn {
+public class Turn implements Cloneable {
 	public static final String [] colors = {"e","b","w"};
 	private Location coordinates;
 	private String stone;
 	private Location [] capStones;
 	private int code;
 	private int captures;
-	private static String message;
+	private String message;
 	int turn;
 	static int nextTurn = 0;
 	private void repOK() {
@@ -31,6 +29,42 @@ public class Turn {
 	
 	public Turn(int x, int y, int color, int code) {
 		this(x,y,color,code,0,null);
+	}
+	
+	 public Turn clone() throws CloneNotSupportedException 
+	{ 
+		 return this.clone(); 
+	} 
+
+	public Location getCoordinates() {
+		return coordinates;
+	}
+
+	public void setCoordinates(Location coordinates) {
+		this.coordinates = coordinates;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setStone(String stone) {
+		this.stone = stone;
+	}
+	
+	public String setColor(int color) {
+		return colors[color];
+	}
+	public void setCapStones(Location[] capStones) {
+		this.capStones = capStones;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setCaptures(int captures) {
+		this.captures = captures;
 	}
 
 	public Turn(int x, int y, int color, int code, int captures) {
@@ -86,5 +120,9 @@ public class Turn {
 		if (this.code>0) turnRep+=" "+message+" ";
 		turnRep+="\n";
 		return turnRep;
+	}
+
+	public void setMessage(String string) {
+		this.message=string;
 	}
 }

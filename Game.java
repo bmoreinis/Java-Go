@@ -1,10 +1,8 @@
 package GoBoard;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Stack;
 public class Game {
 
-	private Stack<Turn> allTurns;
+	Stack<Turn> allTurns;
 	
 	private void repOK() {
 		// Cards may not be null
@@ -17,6 +15,14 @@ public class Game {
 		
 	}
 	
+	public int getAllTurns() {
+		return allTurns.size()+1;
+	}
+
+	public void setAllTurns(Stack<Turn> allTurns) {
+		this.allTurns = allTurns;
+	}
+
 	@Override
 	public String toString() {
 		return allTurns.toString();
