@@ -1,8 +1,9 @@
 package GoBoard;
-import java.util.Stack;
+import java.util.Deque;
+import java.util.LinkedList;
 public class Game {
 
-	Stack<Turn> allTurns;
+	Deque<Turn> allTurns;
 	
 	private void repOK() {
 		// Cards may not be null
@@ -19,7 +20,7 @@ public class Game {
 		return allTurns.size()+1;
 	}
 
-	public void setAllTurns(Stack<Turn> allTurns) {
+	public void setAllTurns(Deque<Turn> allTurns) {
 		this.allTurns = allTurns;
 	}
 
@@ -32,7 +33,7 @@ public class Game {
 	 * Creates an empty deck of cards
 	 */
 	public Game() {
-		this.allTurns = new Stack<Turn>();
+		this.allTurns = new LinkedList<Turn>();
 		repOK();
 	}
 	
@@ -95,7 +96,15 @@ public class Game {
 		if (t==null) {
 			throw new NullPointerException("Can't add a null turn.");
 		}
-		else allTurns.push(t);
+		else {
+			try {
+				Turn newTurn = (Turn) t.clone();
+				allTurns.push(newTurn);
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static void main(String[] args) {

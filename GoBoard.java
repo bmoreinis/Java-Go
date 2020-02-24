@@ -35,7 +35,7 @@ public class GoBoard extends JPanel {
     // How big, in pixels are the stones?
     int stoneSize;
     // Number of pixels to make it so that the circle is centered.
-    int  centerOffset;
+    int centerOffset;
     // The borderOffset is what you must add to all values to get the right 
     // position on the board, because of the ghost column that is the border.
     int borderOffset;
@@ -120,12 +120,14 @@ public class GoBoard extends JPanel {
 		    		chambered.setCapStones(theseCapStones);
 		    	}
 	    		// there is a message
-	    		if (!TextPane.nameText.getText().equals(TextPane.defaultMessage))  {
+	    		if (!message.equals(TextPane.defaultMessage))  {
 	    			chambered.setCode(1);
 	    			chambered.setMessage(message);	
 	    			System.out.println("Chambered "+color+" at location "+x+", "+y+" with "+captures+" captures and "+message+" message.");
 	    		}
 	    		else {
+	    			chambered.setCode(0);
+	    			chambered.setMessage("");	
 	    			System.out.println("Chambered "+color+" at location "+x+", "+y+" with "+captures+" captures.");
 	    		}
 			    turnChambered=true;

@@ -31,9 +31,9 @@ public class Turn implements Cloneable {
 		this(x,y,color,code,0,null);
 	}
 	
-	 public Turn clone() throws CloneNotSupportedException 
+	public Object clone() throws CloneNotSupportedException 
 	{ 
-		 return this.clone(); 
+		 return super.clone(); 
 	} 
 
 	public Location getCoordinates() {
