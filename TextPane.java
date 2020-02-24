@@ -1,6 +1,8 @@
 package GoBoard;
 
 import java.awt.EventQueue;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 import javax.swing.JTextField;
@@ -39,7 +41,7 @@ public class TextPane {
 	 */
 	private void initialize(Game newGame) {
 		frame = new JFrame();
-		frame.setBounds(410, 0, 450, 300);
+		frame.setBounds(410, 0, 450, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -89,9 +91,31 @@ public class TextPane {
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		answerField.setText("Left-Click to place a turn, Right-Click to remove it.  Shift+Right-Click to take captures.  Shift+Left-Click to chamber a turn.  Submit to add turn to Game.");
 		answerField.setEditable(false);
-		answerField.setBounds(46, 140, 300, 75);
+		answerField.setBounds(46, 140, 300, 150);
 		frame.getContentPane().add(answerField);
 		frame.add(scrollPane);
+		
+		
+		JButton prev=new JButton("Prev");  
+		prev.setBounds(46,300,100,25);  
+	    frame.add(prev); 
+	    prev.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+			}   
+		}); 
+		
+		
+		JButton next=new JButton("Next");  
+		next.setBounds(150,300,100,25);  
+	    frame.add(next); 
+		next.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+			}   
+		}); 
 		
 		// Label
 		JLabel lblYourName = new JLabel("Turn Submitted");
