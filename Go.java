@@ -7,5 +7,6 @@ public class Go {
     public static void main(String args[]) {
 		Game newGame = new Game();
 		GoBoard.initiallize(newGame);
+		Game hanoiGame = new Game();
     }
 }

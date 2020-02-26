@@ -45,7 +45,7 @@ public class TextPane {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JToggleButton firstButton = new JToggleButton("Submit");
+		JToggleButton firstButton = new JToggleButton("Record New Turn");
 		firstButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TextPane.message = TextPane.nameText.getText();
@@ -142,7 +142,14 @@ public class TextPane {
 	    	    @Override
 	    	    public void actionPerformed(ActionEvent arg0) {
 	    	    	try {
-						GameFiles.loadGame("teachingGame.txt");
+	    	    		Game fileGame = GameFiles.readTurns("teachingGame.txt");
+	    	    		int gameSize = fileGame.allTurns.size();
+	    	    		System.out.println("\nTurns read: "+ gameSize);
+	    	    		if (newGame.allTurns.size()>0) {
+	    	    			newGame.allTurns.clear();
+	    	    		}
+	    	    		newGame.allTurns.addAll(fileGame.allTurns);
+	    	    		System.out.println("\nTurns added: "+ gameSize);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

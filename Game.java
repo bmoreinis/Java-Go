@@ -4,6 +4,7 @@ import java.util.LinkedList;
 public class Game {
 
 	Deque<Turn> allTurns;
+	Deque<Turn> hanoiTurns;
 	
 	private void repOK() {
 		// Cards may not be null
@@ -34,6 +35,7 @@ public class Game {
 	 */
 	public Game() {
 		this.allTurns = new LinkedList<Turn>();
+		this.hanoiTurns = new LinkedList<Turn>();
 		repOK();
 	}
 	
@@ -63,9 +65,9 @@ public class Game {
 	
 	
 	/**
-	 * Shows the top card without modifying deck contents.
-	 * @return the Card to the top of the deck
-	 * @throws IllegalOperationException if the deck is empty.
+	 * Shows the last turn without modifying deck contents.
+	 * @return the last turn 
+	 * @throws IllegalOperationException if the game is empty.
 	 */
 	public Turn getLastTurn() throws NullPointerException {
 		if (allTurns.isEmpty()) {
@@ -83,7 +85,11 @@ public class Game {
 		if (allTurns.isEmpty()) {
 			throw new NullPointerException("Empty game: no turns to go back from.");
 		}
-		else return allTurns.pop();
+		else {
+			hanoiTurns.push(allTurns.peek());
+			System.out.println("Staged on Hanoi: "+hanoiTurns.toString());
+			return allTurns.pop();
+		}
 	}
 	
 	/**
@@ -106,6 +112,29 @@ public class Game {
 			}
 		}
 	}
+	
+	/**
+	 * Pull turn from hanoi Turns and stage back into game
+	 * @param none
+	 * @throws NullPointerException if c is null
+	 * 
+	 */
+	public Turn nextTurn() throws NullPointerException {
+		if (hanoiTurns.isEmpty()) {
+			System.out.println("All caught up!");
+			return allTurns.peek();
+		}
+		else {
+			try {
+				allTurns.push(hanoiTurns.peek());
+			} catch (NullPointerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return hanoiTurns.pop();
+	}
+	
 	
 	public static void main(String[] args) {
 	}

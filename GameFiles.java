@@ -66,8 +66,14 @@ public class GameFiles {
 	}
 	
 	public static void loadGame(String gamefile) throws Exception {
-		Game newGame = readTurns(gamefile);
-		System.out.println("\nTurns read: "+ newGame.size());
+		Game fileGame = readTurns(gamefile);
+		int gameSize = fileGame.allTurns.size();
+		System.out.println("\nTurns read: "+ gameSize);
+		if (Go.newGame.allTurns.size()>0) {
+			Go.newGame.allTurns.clear();
+		}
+		Go.newGame.allTurns.addAll(fileGame.allTurns);
+		System.out.println("\nTurns added: "+ gameSize);
 	}
 	
 
