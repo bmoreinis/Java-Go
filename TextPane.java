@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 public class TextPane {
 	// variables
 	JFrame frame;
+	static GoBoard t;
 	static JTextField nameText;
 	static boolean changed = false;
 	static JTextPane answerField =  new JTextPane();
@@ -150,6 +151,7 @@ public class TextPane {
 	    	    		}
 	    	    		newGame.allTurns.addAll(fileGame.allTurns);
 	    	    		System.out.println("\nTurns added: "+ gameSize);
+	    	    		GoBoard.loadBoard(newGame, t);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
