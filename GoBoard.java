@@ -3,12 +3,16 @@ package GoBoard;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.event.MouseEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.awt.event.WindowAdapter;
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Robot;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
@@ -48,6 +52,13 @@ public class GoBoard extends JPanel {
 	// must reference a game to add turns to
 	public static Turn chambered = new Turn(0,0,0);
 	public static boolean turnChambered = false;
+	
+	public static void click(int x, int y) throws AWTException{
+	    Robot bot = new Robot();
+	    bot.mouseMove(x, y);    
+	    bot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+	    bot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+	}
     
     public GoBoard(JFrame frame) {
 		board = new int[boardSize][boardSize];
@@ -131,6 +142,8 @@ public class GoBoard extends JPanel {
 			    }
 			    repaint();
 			}
+			
+			
 		});
 	}
 
@@ -138,7 +151,7 @@ public class GoBoard extends JPanel {
 	return preferredSize;
     }
     
-    public static void loadBoard(Game newGame, GoBoard t) {
+    public static void loadBoard(Game newGame, Component g) {
     	int gameSize = newGame.allTurns.size();
     	int currentTurn = gameSize;
     	for (int T = 0; T<gameSize; T++) {
@@ -149,7 +162,12 @@ public class GoBoard extends JPanel {
     		GoBoard.board[y][x]=currentTurn;
     	    currentTurn--;
     	}
-    	// t.repaint();
+    	try {
+			click(100,100);
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public void paintComponent(Graphics g) {
