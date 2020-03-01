@@ -1,5 +1,7 @@
 package GoBoard;
-//NOTE TO BRAM: https://codereview.stackexchange.com/questions/93901/go-board-game-in-java
+// NOTES TO BRAM: 
+// https://youtu.be/Db3cC5iPrOM
+// https://codereview.stackexchange.com/questions/93901/go-board-game-in-java
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.event.MouseEvent;
@@ -151,16 +153,27 @@ public class GoBoard extends JPanel {
 	return preferredSize;
     }
     
-    public static void loadBoard(Game newGame, Component g) {
+    public static void loadBoard(Game newGame, Component g, Boolean buttonNav, int M) {
+    	System.out.println("Button nav: "+buttonNav+" and current turn: "+M);
     	int gameSize = newGame.allTurns.size();
-    	int currentTurn = gameSize;
+    	if (buttonNav==true) {
+    		gameSize = M;
+    	}
     	for (int T = 0; T<gameSize; T++) {
     		Turn popTurn = newGame.allTurns.remove();
     		Location xy = popTurn.getCoordinates();
     		int x = (int) xy.x;
     		int y = (int) xy.y;
-    		GoBoard.board[y][x]=currentTurn;
-    	    currentTurn--;
+    		GoBoard.board[y][x]=T;
+    		if (popTurn.getCaptures()>0) {
+    			Location [] capturedStones = popTurn.getCapStones();
+    			for (int s = 0; s<capturedStones.length;s++) {
+    				x = capturedStones[s].x;
+    				y = capturedStones[s].y;
+    				System.out.println("Capture: "+x+","+y);
+    				GoBoard.board[y][x]=-1;
+    			}
+    		}
     	}
     	try {
 			click(100,100);

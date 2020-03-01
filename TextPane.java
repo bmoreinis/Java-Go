@@ -29,6 +29,7 @@ public class TextPane {
 	static JMenuItem m1, m2, m3, m4, m5; 
 	static String defaultMessage="Message";
 	static String message = defaultMessage;
+	public static int currentTurn = 0;
 	
 	/**
 	 * Create the application.
@@ -96,16 +97,17 @@ public class TextPane {
 		frame.getContentPane().add(answerField);
 		frame.add(scrollPane);
 		
-		
 		JButton prev=new JButton("Prev");  
 		prev.setBounds(46,300,100,25);  
 	    frame.add(prev); 
 	    prev.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				currentTurn--;
+	    		GoBoard.loadBoard(newGame, t, true, currentTurn);
+				}  
 			}   
-		}); 
+	    ); 
 		
 		
 		JButton next=new JButton("Next");  
@@ -114,7 +116,8 @@ public class TextPane {
 		next.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				currentTurn++;
+	    		GoBoard.loadBoard(newGame, t, true, currentTurn);
 			}   
 		}); 
 		
@@ -145,13 +148,15 @@ public class TextPane {
 	    	    	try {
 	    	    		Game fileGame = GameFiles.readTurns("teachingGame.txt");
 	    	    		int gameSize = fileGame.allTurns.size();
+	    	    		currentTurn = gameSize;
 	    	    		System.out.println("\nTurns read: "+ gameSize);
 	    	    		if (newGame.allTurns.size()>0) {
 	    	    			newGame.allTurns.clear();
 	    	    		}
 	    	    		newGame.allTurns.addAll(fileGame.allTurns);
 	    	    		System.out.println("\nTurns added: "+ gameSize);
-	    	    		GoBoard.loadBoard(newGame, t);
+	    	    		GoBoard.loadBoard(newGame, t, false, 100);
+	    	    		System.out.println("Current turn: "+currentTurn);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
