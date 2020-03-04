@@ -1,38 +1,36 @@
 package GoBoard;
 import java.util.Deque;
 import java.util.LinkedList;
-public class Game {
 
+/** 
+ * Represents a Go Game
+ * @author Bram
+ *
+ */
+
+public class Game {
+	
+	/* this Deque is for all played turns */
 	Deque<Turn> allTurns;
+	
+	/* this Deque is for moving played turns into a queue when navigating forward & back. */
 	Deque<Turn> hanoiTurns;
 	
+	
 	private void repOK() {
-		// Cards may not be null
+		// Turns Deque may not be null
 		assert(allTurns !=null);
-		
-		// No null Cards in cards
+		// No null Turns in Turns Deque
 		for (Turn t : allTurns) {
 			assert(t != null);
 		}
-		
 	}
 	
-	public int getAllTurns() {
-		return allTurns.size()+1;
-	}
-
-	public void setAllTurns(Deque<Turn> allTurns) {
-		this.allTurns = allTurns;
-	}
-
-	@Override
-	public String toString() {
-		return allTurns.toString();
-	}
-	
-	/* Constructor
-	 * Creates an empty deck of cards
+	/** Constructor 
+	 * Creates a new Game with an empty Deque of Turns
+	 * and an empty Deque for swapping turns
 	 */
+	
 	public Game() {
 		this.allTurns = new LinkedList<Turn>();
 		this.hanoiTurns = new LinkedList<Turn>();
@@ -41,55 +39,12 @@ public class Game {
 	
 	
 	/**
-	 * Checks if specified deck is empty.  
-	 * @return true if there are zero cards in the deck.
+	 * Checks if specified Game has no turns.  
+	 * @return true if there are zero Turns in the game.
 	 */
 	
 	public boolean isEmpty() {
-		return allTurns.isEmpty();
-	}
-	
-	/**
-	 * Returns the turns in a game
-	 * @return in 
-	 * @throws NullPointerException
-	 */
-	public int size() throws NullPointerException {
-		if (allTurns==null) {
-			throw new NullPointerException("Can't size a null game.");
-		}
-		else {
-			return allTurns.size();
-		}
-	}
-	
-	
-	/**
-	 * Shows the last turn without modifying deck contents.
-	 * @return the last turn 
-	 * @throws IllegalOperationException if the game is empty.
-	 */
-	public Turn getLastTurn() throws NullPointerException {
-		if (allTurns.isEmpty()) {
-			throw new NullPointerException("No turns yet.");
-		}
-		else return allTurns.peek();
-	}
-	
-	
-	/**
-	 * Go back one turn
-	 * @throws NullPointerException if the deck is empty.
-	 */
-	public Turn previousTurn() throws NullPointerException {
-		if (allTurns.isEmpty()) {
-			throw new NullPointerException("Empty game: no turns to go back from.");
-		}
-		else {
-			hanoiTurns.push(allTurns.peek());
-			System.out.println("Staged on Hanoi: "+hanoiTurns.toString());
-			return allTurns.pop();
-		}
+		return this.allTurns.isEmpty();
 	}
 	
 	/**
@@ -105,13 +60,69 @@ public class Game {
 		else {
 			try {
 				Turn newTurn = (Turn) t.clone();
-				allTurns.push(newTurn);
+				this.allTurns.push(newTurn);
 			} catch (CloneNotSupportedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
+	
+	
+	/**
+	 * Returns the number of turns in a game
+	 * @return in 
+	 * @throws NullPointerException
+	 */
+	public int size() throws NullPointerException {
+		if (this.allTurns==null) {
+			throw new NullPointerException("Can't size a null game.");
+		}
+		else {
+			return this.allTurns.size();
+		}
+	}
+	
+	/**
+	 * Adds turns from a saved game to an existing game, removing existing turns first.
+	 */
+	public void addAllTurns(Game toAdd) {
+		if (!this.isEmpty()) {
+			this.allTurns.clear();
+		}
+		this.allTurns.addAll(toAdd.allTurns);
+	}
+	
+	
+	/**
+	 * Shows the last turn without modifying deck contents.
+	 * @return the last turn 
+	 * @throws IllegalOperationException if the game is empty.
+	 */
+	public Turn getLastTurn() throws NullPointerException {
+		if (this.isEmpty()) {
+			throw new NullPointerException("No turns yet.");
+		}
+		else return this.allTurns.peek();
+	}
+	
+
+	
+	/**
+	 * Go back one turn
+	 * @throws NullPointerException if the deck is empty.
+	 */
+	public Turn previousTurn() throws NullPointerException {
+		if (this.isEmpty()) {
+			throw new NullPointerException("Empty game: no turns to go back from.");
+		}
+		else {
+			this.hanoiTurns.push(this.allTurns.peek());
+			System.out.println("Staged on Hanoi: "+this.hanoiTurns.toString());
+			return this.allTurns.pop();
+		}
+	}
+	
 	
 	/**
 	 * Pull turn from hanoi Turns and stage back into game
@@ -120,28 +131,32 @@ public class Game {
 	 * 
 	 */
 	public Turn nextTurn() throws NullPointerException {
-		if (hanoiTurns.isEmpty()) {
+		if (this.hanoiTurns.size()==0) {
 			System.out.println("All caught up!");
-			return allTurns.peek();
+			return this.allTurns.peek();
 		}
 		else {
 			try {
-				allTurns.push(hanoiTurns.peek());
+				this.allTurns.push(this.hanoiTurns.peek());
 			} catch (NullPointerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		return hanoiTurns.pop();
+		return this.hanoiTurns.pop();
 	}
 	
-	
-	public static void main(String[] args) {
+	public int getAllTurns() {
+		return this.allTurns.size()+1;
 	}
-
-	public String length() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public void setAllTurns(Deque<Turn> allTurns) {
+		this.allTurns = allTurns;
+	}
+	
+	@Override
+	public String toString() {
+		return allTurns.toString();
 	}
 
 }

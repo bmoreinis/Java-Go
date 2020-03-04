@@ -41,7 +41,7 @@ public class TextPane {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(Game newGame) {
+	public void initialize(Game newGame) {
 		frame = new JFrame();
 		frame.setBounds(410, 0, 450, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -142,6 +142,7 @@ public class TextPane {
 	     mb.add(x); 
 	     frame.setJMenuBar(mb); 
 	     
+	     //m1 = new JMenuItem("Load Teaching Game"); 
 	     m1.addActionListener(new ActionListener() {
 	    	    @Override
 	    	    public void actionPerformed(ActionEvent arg0) {
@@ -150,7 +151,9 @@ public class TextPane {
 	    	    		int gameSize = fileGame.allTurns.size();
 	    	    		currentTurn = gameSize;
 	    	    		System.out.println("\nTurns read: "+ gameSize);
-	    	    		if (newGame.allTurns.size()>0) {
+	    	    		int currGameSize = newGame.allTurns.size();
+	    	    		System.out.println("Current Game Size = "+currGameSize);
+	    	    		if (currGameSize>0) {
 	    	    			newGame.allTurns.clear();
 	    	    		}
 	    	    		newGame.allTurns.addAll(fileGame.allTurns);
@@ -163,12 +166,14 @@ public class TextPane {
 					}
 	    	    }
 	    	});
-	    
+	     
+	     // m2 = new JMenuItem("Load Full Game"); 
 	     m2.addActionListener(new ActionListener() {
 	    	    @Override
 	    	    public void actionPerformed(ActionEvent arg0) {
 	    	    	try {
-						GameFiles.loadGame("fullGame.txt");
+						//GameFiles.loadGame("fullGame.txt");
+	    	    		System.out.println(newGame.toString());
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -176,6 +181,7 @@ public class TextPane {
 	    	    }
 	    	});
 	     
+	     //m3 = new JMenuItem("Save Current Game"); 
 	     m3.addActionListener(new ActionListener() {
 	    	    @Override
 	    	    public void actionPerformed(ActionEvent arg0) {
@@ -188,6 +194,7 @@ public class TextPane {
 	    	    }
 	    	});
 	     
+	     // m4 = new JMenuItem("Display Current Game"); 
 	     m4.addActionListener(new ActionListener() {
 	    	    @Override
 	    	    public void actionPerformed(ActionEvent arg0) {
@@ -200,6 +207,7 @@ public class TextPane {
 	    	    }
 	    	});
 	     
+	     // m5 = new JMenuItem("Clear Current Game"); 
 	     m5.addActionListener(new ActionListener() {
 	    	    @Override
 	    	    public void actionPerformed(ActionEvent arg0) {
@@ -212,8 +220,6 @@ public class TextPane {
 					}
 	    	    }
 	    	});
-	     
-
 	}
 
 	public String getMessage() {
