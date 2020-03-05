@@ -20,7 +20,6 @@ import java.awt.EventQueue;
 
 public class GoBoard extends JPanel {
 	
-	
 	// constants
 	private static final long serialVersionUID = 1L;
 	static GoBoard t;
@@ -31,8 +30,6 @@ public class GoBoard extends JPanel {
     // black always goes first.
     public static char lastMove = 'w';
     static int moveCount = 0; 
-    int color=0;
-    int captures=0;
 
     // --- Computed values ---
     // Everything is square, but this is computed so that we know where
@@ -46,14 +43,17 @@ public class GoBoard extends JPanel {
     // The borderOffset is what you must add to all values to get the right 
     // position on the board, because of the ghost column that is the border.
     int borderOffset;
-    // OOP Integration
+    
+    /*  OOP Integration */
     // Signify and store new captures
     boolean newCaptures = false;
     // must use ArrayList because variable length
 	ArrayList<Location> newCapStones = new ArrayList<Location>();
-	// must reference a game to add turns to
+	// must reference a Turn to add coordinates to
 	public static Turn chambered = new Turn(0,0,0);
 	public static boolean turnChambered = false;
+    int color=0;
+    int captures=0;
 	
 	public static void click(int x, int y) throws AWTException{
 	    Robot bot = new Robot();
@@ -153,6 +153,43 @@ public class GoBoard extends JPanel {
 	return preferredSize;
     }
     
+    
+    public static void loadBoard(Game newGame, Component g) {
+    	java.util.Iterator<Turn> gameTurns = newGame.allTurns.iterator();
+    	int thisTurn = 0;
+    	while (gameTurns.hasNext()) { 
+    		Turn popTurn = newGame.allTurns.remove();
+    		newGame.hanoiTurns.add(popTurn);
+    		Location xy = popTurn.getCoordinates();
+    		int x = (int) xy.x;
+    		int y = (int) xy.y;
+    		GoBoard.board[y][x]=thisTurn;
+    		thisTurn++;
+    		if (popTurn.getCaptures()>0) {
+    			Location [] capturedStones = popTurn.getCapStones();
+    			for (int s = 0; s<capturedStones.length;s++) {
+    				x = capturedStones[s].x;
+    				y = capturedStones[s].y;
+    				System.out.println("Capture: "+x+","+y);
+    				GoBoard.board[y][x]=-1;
+    			}
+    		}
+    		System.out.println("Hanoi size = "+newGame.hanoiTurns.size()+ "And allTurns size = "+newGame.allTurns.size());
+    	}
+    	java.util.Iterator<Turn> hanoiTurns = newGame.hanoiTurns.iterator();
+    	while (hanoiTurns.hasNext()) { 
+			Turn pushTurn = newGame.hanoiTurns.remove();
+			newGame.allTurns.add(pushTurn);
+		}
+    	try {
+			click(100,100);
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+
+    
     public static void loadBoard(Game newGame, Component g, Boolean buttonNav, int M) {
     	System.out.println("Button nav: "+buttonNav+" and current turn: "+M);
     	int gameSize = newGame.allTurns.size();
@@ -161,6 +198,7 @@ public class GoBoard extends JPanel {
     	}
     	for (int T = 0; T<gameSize; T++) {
     		Turn popTurn = newGame.allTurns.remove();
+    		newGame.hanoiTurns.add(popTurn);
     		Location xy = popTurn.getCoordinates();
     		int x = (int) xy.x;
     		int y = (int) xy.y;
@@ -174,7 +212,13 @@ public class GoBoard extends JPanel {
     				GoBoard.board[y][x]=-1;
     			}
     		}
+    		System.out.println("Hanoi size = "+newGame.hanoiTurns.size()+ "And allTurns size = "+newGame.allTurns.size());
     	}
+    	java.util.Iterator<Turn> hanoiTurns = newGame.hanoiTurns.iterator();
+    	while (hanoiTurns.hasNext()) { 
+			Turn pushTurn = newGame.hanoiTurns.remove();
+			newGame.allTurns.add(pushTurn);
+		}
     	try {
 			click(100,100);
 		} catch (AWTException e) {
@@ -182,7 +226,8 @@ public class GoBoard extends JPanel {
 			e.printStackTrace();
 		}
     }
-
+    
+    
     public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(new Color(200,170,30));
@@ -219,6 +264,27 @@ public class GoBoard extends JPanel {
 					       stoneSize, stoneSize);
 					} 
 			    }
+			}
+	    }
+	    public void clearBoard(Graphics g) {
+	    	for (int i = 0; i < boardSize; i++) {
+			    for (int j = 0; j < boardSize; j++) {
+					board[i][j] = 0;
+				    }
+				}
+		    super.paintComponent(g);
+			g.setColor(new Color(200,170,30));
+			// Create the gold/tan background
+			g.fillRect(0,0,boardPixelSize,boardPixelSize);
+			// draw the board.
+			g.setColor(Color.black);
+			for (int i = 0; i < boardSize; i++) {
+			    g.drawLine(borderOffset, borderOffset+i*squareSize,
+				       borderOffset+(boardSize-1)*squareSize,
+				       borderOffset+i*squareSize);
+			    g.drawLine(borderOffset+i*squareSize,borderOffset,
+				       borderOffset+i*squareSize,
+				       borderOffset+(boardSize-1)*squareSize);
 			}
 	    }
 	    

@@ -1,5 +1,4 @@
 package GoBoard;
-
 import java.awt.EventQueue;
 
 import javax.swing.JButton;
@@ -58,6 +57,7 @@ public class TextPane {
 					if (TextPane.message.equals(defaultMessage)) {
 						System.out.println(GoBoard.chambered.toString()); 
 						answerField.setText(GoBoard.chambered.toString());
+			    		System.out.println(newGame.toString());
 						newGame.addTurn(GoBoard.chambered);
 						GoBoard.turnChambered = false;
 		    		}
@@ -109,7 +109,6 @@ public class TextPane {
 			}   
 	    ); 
 		
-		
 		JButton next=new JButton("Next");  
 		next.setBounds(150,300,100,25);  
 	    frame.add(next); 
@@ -147,19 +146,21 @@ public class TextPane {
 	    	    @Override
 	    	    public void actionPerformed(ActionEvent arg0) {
 	    	    	try {
+	    	    		for (int i = 0; i < GoBoard.boardSize; i++) {
+	    				    for (int j = 0; j < GoBoard.boardSize; j++) {
+	    				    	GoBoard.board[i][j] = 0;
+	    					}
+	    				}
 	    	    		Game fileGame = GameFiles.readTurns("teachingGame.txt");
-	    	    		int gameSize = fileGame.allTurns.size();
-	    	    		currentTurn = gameSize;
-	    	    		System.out.println("\nTurns read: "+ gameSize);
-	    	    		int currGameSize = newGame.allTurns.size();
-	    	    		System.out.println("Current Game Size = "+currGameSize);
-	    	    		if (currGameSize>0) {
+	    	    		System.out.println("\nTurns read: "+ fileGame.allTurns.size());
+	    	    		if (newGame.allTurns.size()>0) {
 	    	    			newGame.allTurns.clear();
 	    	    		}
 	    	    		newGame.allTurns.addAll(fileGame.allTurns);
-	    	    		System.out.println("\nTurns added: "+ gameSize);
-	    	    		GoBoard.loadBoard(newGame, t, false, 100);
-	    	    		System.out.println("Current turn: "+currentTurn);
+	    	    		System.out.println("Current newGame is: \n"+newGame.toString());
+	    	    		GoBoard.loadBoard(newGame, t);
+	    	    		System.out.println("NewGame is now "+newGame.toString());
+	    	    		System.out.println("Current turn: "+newGame.allTurns.size());
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
