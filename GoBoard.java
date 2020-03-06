@@ -57,7 +57,17 @@ public class GoBoard extends JPanel {
 	
 	public static void click(int x, int y) throws AWTException{
 	    Robot bot = new Robot();
-	    bot.mouseMove(x, y);    
+	    System.out.println("X , Y = "+x+y);
+	    if (x < 0 || y < 0 ) {
+	    	System.out.println("Text Pane Operation");
+	    }
+	    else if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
+	    	System.out.println("Out of bounds");
+	    	TextPane.clicks=0;
+	    }
+	    else {
+		    bot.mouseMove(x, y);    
+	    }
 	    bot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
 	    bot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 	}
@@ -86,73 +96,79 @@ public class GoBoard extends JPanel {
 					  squareSize);
 			    int y = (int)((e.getY()-centerOffset-borderOffset)/
 					  squareSize);
+			    // repaint
+			    if (x == -2 || y == -2) {
+			    	repaint();
+			    	System.out.println("Board Repainted");
+			    }
+			    
 			    // out of bounds
-			    if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
-			    	System.out.println("Out of bounds");
+			    else if (x < 0 || x > boardSize-1 || y < 0 || y > boardSize-1) {
+			    	System.out.println("Out of bounds!");
+			    	repaint();
+			    	System.out.println("Board Repainted.");
 			    }
-			    // Left click to place
-			    else if (board[y][x] == 0 && e.getButton() == MouseEvent.BUTTON1) {
-			    	board[y][x] = ++moveCount;
-				    color=(moveCount-1)%2+1;
-				    System.out.println("Placed "+color+" at location "+x+", "+y);
+			    else {
+				    if (board[y][x] == 0 && e.getButton() == MouseEvent.BUTTON1) {
+				    	board[y][x] = ++moveCount;
+					    color=(moveCount-1)%2+1;
+					    System.out.println("Placed "+color+" at location "+x+", "+y);
+				    }
+				    // Right click to remove
+				    if(e.getButton() == MouseEvent.BUTTON3) {
+				    	// Remove a stone, take a different turn
+				    	if (modifiersEx != 64) {
+				    		board[y][x]=0;
+					    	moveCount--;
+				    	}
+				    	// Shift Added: remove a stone, replace with red, add to captures and to newCapStones
+				    	else if (modifiersEx==64) {
+				    		board[y][x]=-1;
+				    		Location newLoc = new Location(x,y);
+				    		newCapStones.add(newLoc);
+				    		captures++;
+				    	}
+				    }
+				   // Left-Click + Shift: Chamber a turn
+				    else if (modifiersEx==64) {
+				    	Location chamberedCoords = new Location(x,y);
+					    chambered.setCoordinates(chamberedCoords);
+					    chambered.setColor(color);
+					    String message=TextPane.nameText.getText();
+				    	// there are captures
+				    	if (captures>0){
+				    		chambered.setCaptures(captures);
+				    		Location [] theseCapStones = new Location [captures];
+				    		theseCapStones = newCapStones.toArray(theseCapStones);
+				    		chambered.setCapStones(theseCapStones);
+				    	}
+			    		// there is a message
+			    		if (!message.equals(TextPane.defaultMessage))  {
+			    			chambered.setCode(1);
+			    			chambered.setMessage(message);	
+			    			System.out.println("Chambered "+color+" at location "+x+", "+y+" with "+captures+" captures and "+message+" message.");
+			    		}
+			    		else {
+			    			chambered.setCode(0);
+			    			chambered.setMessage("");	
+			    			System.out.println("Chambered "+color+" at location "+x+", "+y+" with "+captures+" captures.");
+			    		}
+					    turnChambered=true;
+				    }
+				    //Left-Click: Set up a Turn
+				    else if (board[y][x] == 0) {
+				    	board[y][x] = ++moveCount;
+					    color=(moveCount-1)%2+1;
+				    }
+				    repaint();
 			    }
-			    // Right click to remove
-			    if(e.getButton() == MouseEvent.BUTTON3) {
-			    	// Remove a stone, take a different turn
-			    	if (modifiersEx != 64) {
-			    		board[y][x]=0;
-				    	moveCount--;
-			    	}
-			    	// Shift Added: remove a stone, replace with red, add to captures and to newCapStones
-			    	else if (modifiersEx==64) {
-			    		board[y][x]=-1;
-			    		Location newLoc = new Location(x,y);
-			    		newCapStones.add(newLoc);
-			    		captures++;
-			    	}
-			    }
-			   // Left-Click + Shift: Chamber a turn
-			    else if (modifiersEx==64) {
-			    	Location chamberedCoords = new Location(x,y);
-				    chambered.setCoordinates(chamberedCoords);
-				    chambered.setColor(color);
-				    String message=TextPane.nameText.getText();
-			    	// there are captures
-			    	if (captures>0){
-			    		chambered.setCaptures(captures);
-			    		Location [] theseCapStones = new Location [captures];
-			    		theseCapStones = newCapStones.toArray(theseCapStones);
-			    		chambered.setCapStones(theseCapStones);
-			    	}
-		    		// there is a message
-		    		if (!message.equals(TextPane.defaultMessage))  {
-		    			chambered.setCode(1);
-		    			chambered.setMessage(message);	
-		    			System.out.println("Chambered "+color+" at location "+x+", "+y+" with "+captures+" captures and "+message+" message.");
-		    		}
-		    		else {
-		    			chambered.setCode(0);
-		    			chambered.setMessage("");	
-		    			System.out.println("Chambered "+color+" at location "+x+", "+y+" with "+captures+" captures.");
-		    		}
-				    turnChambered=true;
-			    }
-			    //Left-Click: Set up a Turn
-			    else if (board[y][x] == 0) {
-			    	board[y][x] = ++moveCount;
-				    color=(moveCount-1)%2+1;
-			    }
-			    repaint();
 			}
-			
-			
 		});
 	}
 
     public Dimension getPrefferedSize() {
 	return preferredSize;
     }
-    
     
     public static void loadBoard(Game newGame, Component g) {
     	java.util.Iterator<Turn> gameTurns = newGame.allTurns.iterator();
@@ -182,7 +198,7 @@ public class GoBoard extends JPanel {
 			newGame.allTurns.add(pushTurn);
 		}
     	try {
-			click(100,100);
+    		click(-1, -1);
 		} catch (AWTException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -190,57 +206,71 @@ public class GoBoard extends JPanel {
     }
 
     
-    public static void prevBoard(Game newGame, Component g) {
-    	int gameSize = newGame.allTurns.size();
-		Turn popTurn = newGame.allTurns.remove();
-		newGame.hanoiTurns.add(popTurn);
-		Location xy = popTurn.getCoordinates();
-		int x = (int) xy.x;
-		int y = (int) xy.y;
-		GoBoard.board[y][x]=gameSize;
-		if (popTurn.getCaptures()>0) {
-			Location [] capturedStones = popTurn.getCapStones();
-			for (int s = 0; s<capturedStones.length;s++) {
-				x = capturedStones[s].x;
-				y = capturedStones[s].y;
-				System.out.println("Capture: "+x+","+y);
-				GoBoard.board[y][x]=-1;
+    public static void prevBoard(Game newGame, Component g) throws NullPointerException {
+		if (TextPane.clicks < 1) {
+			try {
+				System.out.println("newGame is now "+newGame.toString());
+				Turn popTurn = newGame.allTurns.pop();
+				newGame.hanoiTurns.add(popTurn);
+				Location xy = popTurn.getCoordinates();
+				int x = (int) xy.x;
+				int y = (int) xy.y;
+				System.out.println("Removing "+x+" ,"+y);
+				GoBoard.board[y][x]=0;
+				if (popTurn.getCaptures()>0) {
+					Location [] capturedStones = popTurn.getCapStones();
+					for (int s = 0; s<capturedStones.length;s++) {
+						x = capturedStones[s].x;
+						y = capturedStones[s].y;
+						System.out.println("Placing capture: "+x+","+y);
+						GoBoard.board[y][x]=-1;
+					}
+				} 
+		    	try {
+		    		System.out.println("Clicks = "+TextPane.clicks);
+					click(-1, -1);
+		    		TextPane.clicks++;
+				} catch (AWTException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (NullPointerException f) {
+				System.out.println("No Turns Left to Remove");
 			}
-		} 
-    	try {
-			click(100,100);
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
     }
     
-	public static void nextBoard(Game newGame, Component g) {
+	public static void nextBoard(Game newGame, Component g) throws NullPointerException {
 		int gameSize = newGame.allTurns.size();
-		Turn popTurn = newGame.hanoiTurns.remove();
-		newGame.allTurns.add(popTurn);
-		Location xy = popTurn.getCoordinates();
-		int x = (int) xy.x;
-		int y = (int) xy.y;
-		GoBoard.board[y][x]=gameSize;
-		if (popTurn.getCaptures()>0) {
-			Location [] capturedStones = popTurn.getCapStones();
-			for (int s = 0; s<capturedStones.length;s++) {
-				x = capturedStones[s].x;
-				y = capturedStones[s].y;
-				System.out.println("Capture: "+x+","+y);
-				GoBoard.board[y][x]=-1;
-			}
-		} 
 		try {
-			click(100,100);
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Turn popTurn = newGame.hanoiTurns.remove();
+			newGame.allTurns.add(popTurn);
+			Location xy = popTurn.getCoordinates();
+			int x = (int) xy.x;
+			int y = (int) xy.y;
+			System.out.println("Adding "+x+" ,"+y);
+			GoBoard.board[y][x]=gameSize;
+			if (popTurn.getCaptures()>0) {
+				Location [] capturedStones = popTurn.getCapStones();
+				for (int s = 0; s<capturedStones.length;s++) {
+					x = capturedStones[s].x;
+					y = capturedStones[s].y;
+					System.out.println("Removing Captures: "+x+","+y);
+					GoBoard.board[y][x]=0;
+				}
+			} 
+			try {
+				click(-1, -1);
+			} catch (AWTException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}  catch (NullPointerException f) {
+			System.out.println("No Turns Left to Add");
 		}
 	}
 
-    
+	// this repaints the board from the array, placing stones based on the turn sequence, with black first. 
     public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(new Color(200,170,30));
@@ -256,7 +286,7 @@ public class GoBoard extends JPanel {
 			       borderOffset+i*squareSize,
 			       borderOffset+(boardSize-1)*squareSize);
 		}
-		// this repaints the board from the array, placing stones based on the turn sequence, with black first.      
+     
 		//System.out.print(Arrays.deepToString(board));
 		//System.out.println();
 		//System.out.println("================");
@@ -281,7 +311,6 @@ public class GoBoard extends JPanel {
 	    }
 	    
 	    public static void initiallize(Game newGame) {
-	    	System.out.println("Accessing in GoBoard ...."+newGame.getAllTurns());
 			JFrame frame = new JFrame("Go Board");
 			GoBoard t = new GoBoard(frame);
 			frame.addWindowListener(new WindowAdapter() {

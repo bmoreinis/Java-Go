@@ -6,9 +6,9 @@ public class Go {
    
     public static void main(String args[]) {
 		final Game newGame = new Game();
-		Turn testTurn = new Turn(3,3,1);
-		newGame.addTurn(testTurn);
-		System.out.println(newGame.toString());
+		//Turn testTurn = new Turn(3,3,1);
+		//newGame.addTurn(testTurn);
+		//System.out.println(newGame.toString());
 		GoBoard.initiallize(newGame);
     }
 }

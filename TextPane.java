@@ -1,4 +1,5 @@
 package GoBoard;
+import java.awt.AWTException;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 
@@ -31,7 +32,7 @@ public class TextPane {
 	static String defaultMessage="Message";
 	static String message = defaultMessage;
 	public static int currentTurn = 0;
-	
+	public static int clicks = 0;
 	/**
 	 * Create the application.
 	 */
@@ -59,8 +60,8 @@ public class TextPane {
 					if (TextPane.message.equals(defaultMessage)) {
 						System.out.println(GoBoard.chambered.toString()); 
 						answerField.setText(GoBoard.chambered.toString());
-			    		System.out.println(newGame.toString());
 						newGame.addTurn(GoBoard.chambered);
+			    		System.out.println("newGame is now :"+newGame.toString());
 						GoBoard.turnChambered = false;
 		    		}
 		    		else {
@@ -108,7 +109,7 @@ public class TextPane {
 				currentTurn--;
 	    		GoBoard.prevBoard(newGame, t);
 				}  
-			}   
+			}  
 	    ); 
 		
 		JButton next=new JButton("Next");  
@@ -119,8 +120,18 @@ public class TextPane {
 			public void actionPerformed(ActionEvent e) {
 				currentTurn++;
 	    		GoBoard.nextBoard(newGame, t);
-			}   
+			}  
 		}); 
+		
+		JButton repaint=new JButton("Repaint");  
+		repaint.setBounds(253,300,100,25);  
+	    frame.add(repaint); 
+	    repaint.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+	    		GoBoard.loadBoard(newGame, t);
+			}  
+	    }); 
 		
 		// Label
 		JLabel lblYourName = new JLabel("Turn Submitted");
