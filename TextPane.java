@@ -1,5 +1,6 @@
 package GoBoard;
 import java.awt.EventQueue;
+import java.awt.Graphics;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,6 +20,7 @@ public class TextPane {
 	// variables
 	JFrame frame;
 	static GoBoard t;
+	static Graphics g;
 	static JTextField nameText;
 	static boolean changed = false;
 	static JTextPane answerField =  new JTextPane();
@@ -104,7 +106,7 @@ public class TextPane {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentTurn--;
-	    		GoBoard.loadBoard(newGame, t, true, currentTurn);
+	    		GoBoard.prevBoard(newGame, t);
 				}  
 			}   
 	    ); 
@@ -116,7 +118,7 @@ public class TextPane {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentTurn++;
-	    		GoBoard.loadBoard(newGame, t, true, currentTurn);
+	    		GoBoard.nextBoard(newGame, t);
 			}   
 		}); 
 		
@@ -226,7 +228,6 @@ public class TextPane {
 	public String getMessage() {
 		return message;
 	}
-
 	
 	/**
 	 * Launch the application.
@@ -245,8 +246,5 @@ public class TextPane {
 			}
 		});
 	}
-
-	
-
 }
 

@@ -190,35 +190,23 @@ public class GoBoard extends JPanel {
     }
 
     
-    public static void loadBoard(Game newGame, Component g, Boolean buttonNav, int M) {
-    	System.out.println("Button nav: "+buttonNav+" and current turn: "+M);
+    public static void prevBoard(Game newGame, Component g) {
     	int gameSize = newGame.allTurns.size();
-    	if (buttonNav==true) {
-    		gameSize = M;
-    	}
-    	for (int T = 0; T<gameSize; T++) {
-    		Turn popTurn = newGame.allTurns.remove();
-    		newGame.hanoiTurns.add(popTurn);
-    		Location xy = popTurn.getCoordinates();
-    		int x = (int) xy.x;
-    		int y = (int) xy.y;
-    		GoBoard.board[y][x]=T;
-    		if (popTurn.getCaptures()>0) {
-    			Location [] capturedStones = popTurn.getCapStones();
-    			for (int s = 0; s<capturedStones.length;s++) {
-    				x = capturedStones[s].x;
-    				y = capturedStones[s].y;
-    				System.out.println("Capture: "+x+","+y);
-    				GoBoard.board[y][x]=-1;
-    			}
-    		}
-    		System.out.println("Hanoi size = "+newGame.hanoiTurns.size()+ "And allTurns size = "+newGame.allTurns.size());
-    	}
-    	java.util.Iterator<Turn> hanoiTurns = newGame.hanoiTurns.iterator();
-    	while (hanoiTurns.hasNext()) { 
-			Turn pushTurn = newGame.hanoiTurns.remove();
-			newGame.allTurns.add(pushTurn);
-		}
+		Turn popTurn = newGame.allTurns.remove();
+		newGame.hanoiTurns.add(popTurn);
+		Location xy = popTurn.getCoordinates();
+		int x = (int) xy.x;
+		int y = (int) xy.y;
+		GoBoard.board[y][x]=gameSize;
+		if (popTurn.getCaptures()>0) {
+			Location [] capturedStones = popTurn.getCapStones();
+			for (int s = 0; s<capturedStones.length;s++) {
+				x = capturedStones[s].x;
+				y = capturedStones[s].y;
+				System.out.println("Capture: "+x+","+y);
+				GoBoard.board[y][x]=-1;
+			}
+		} 
     	try {
 			click(100,100);
 		} catch (AWTException e) {
@@ -227,6 +215,31 @@ public class GoBoard extends JPanel {
 		}
     }
     
+	public static void nextBoard(Game newGame, Component g) {
+		int gameSize = newGame.allTurns.size();
+		Turn popTurn = newGame.hanoiTurns.remove();
+		newGame.allTurns.add(popTurn);
+		Location xy = popTurn.getCoordinates();
+		int x = (int) xy.x;
+		int y = (int) xy.y;
+		GoBoard.board[y][x]=gameSize;
+		if (popTurn.getCaptures()>0) {
+			Location [] capturedStones = popTurn.getCapStones();
+			for (int s = 0; s<capturedStones.length;s++) {
+				x = capturedStones[s].x;
+				y = capturedStones[s].y;
+				System.out.println("Capture: "+x+","+y);
+				GoBoard.board[y][x]=-1;
+			}
+		} 
+		try {
+			click(100,100);
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
     
     public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -264,27 +277,6 @@ public class GoBoard extends JPanel {
 					       stoneSize, stoneSize);
 					} 
 			    }
-			}
-	    }
-	    public void clearBoard(Graphics g) {
-	    	for (int i = 0; i < boardSize; i++) {
-			    for (int j = 0; j < boardSize; j++) {
-					board[i][j] = 0;
-				    }
-				}
-		    super.paintComponent(g);
-			g.setColor(new Color(200,170,30));
-			// Create the gold/tan background
-			g.fillRect(0,0,boardPixelSize,boardPixelSize);
-			// draw the board.
-			g.setColor(Color.black);
-			for (int i = 0; i < boardSize; i++) {
-			    g.drawLine(borderOffset, borderOffset+i*squareSize,
-				       borderOffset+(boardSize-1)*squareSize,
-				       borderOffset+i*squareSize);
-			    g.drawLine(borderOffset+i*squareSize,borderOffset,
-				       borderOffset+i*squareSize,
-				       borderOffset+(boardSize-1)*squareSize);
 			}
 	    }
 	    
