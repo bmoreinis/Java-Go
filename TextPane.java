@@ -1,8 +1,6 @@
 package GoBoard;
-import java.awt.AWTException;
 import java.awt.EventQueue;
 import java.awt.Graphics;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JToggleButton;
@@ -28,11 +26,11 @@ public class TextPane {
 	static JTextField messageSent;
 	static JMenuBar mb; 
 	static JMenu x;  
-	static JMenuItem m1, m2, m3, m4, m5; 
+	static JMenuItem m1, m2, m3, m4, m5, m6; 
 	static String defaultMessage="Message";
 	static String message = defaultMessage;
 	public static int currentTurn = 0;
-	public static int clicks = 0;
+	
 	/**
 	 * Create the application.
 	 */
@@ -60,8 +58,8 @@ public class TextPane {
 					if (TextPane.message.equals(defaultMessage)) {
 						System.out.println(GoBoard.chambered.toString()); 
 						answerField.setText(GoBoard.chambered.toString());
+			    		System.out.println(newGame.toString());
 						newGame.addTurn(GoBoard.chambered);
-			    		System.out.println("newGame is now :"+newGame.toString());
 						GoBoard.turnChambered = false;
 		    		}
 		    		else {
@@ -109,7 +107,7 @@ public class TextPane {
 				currentTurn--;
 	    		GoBoard.prevBoard(newGame, t);
 				}  
-			}  
+			}   
 	    ); 
 		
 		JButton next=new JButton("Next");  
@@ -120,19 +118,21 @@ public class TextPane {
 			public void actionPerformed(ActionEvent e) {
 				currentTurn++;
 	    		GoBoard.nextBoard(newGame, t);
-			}  
+			}   
 		}); 
 		
+
 		JButton repaint=new JButton("Repaint");  
 		repaint.setBounds(253,300,100,25);  
 	    frame.add(repaint); 
 	    repaint.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-	    		GoBoard.loadBoard(newGame, t);
+	    		GoBoard.clearBoard(newGame, t);
 			}  
 	    }); 
-		
+	    
+	    
 		// Label
 		JLabel lblYourName = new JLabel("Turn Submitted");
 		lblYourName.setBounds(46, 120, 300, 16);
@@ -146,11 +146,14 @@ public class TextPane {
 	     m3 = new JMenuItem("Save Current Game"); 
 	     m4 = new JMenuItem("Display Current Game"); 
 	     m5 = new JMenuItem("Clear Current Game"); 
+	     m6 = new JMenuItem("Refresh Board"); 
+	     
 	     x.add(m1); 
 	     x.add(m2); 
 	     x.add(m3); 
 	     x.add(m4); 
 	     x.add(m5); 
+	     x.add(m6);
 	     mb.add(x); 
 	     frame.setJMenuBar(mb); 
 	     
@@ -219,6 +222,7 @@ public class TextPane {
 						e.printStackTrace();
 					}
 	    	    }
+	    	    
 	    	});
 	     
 	     // m5 = new JMenuItem("Clear Current Game"); 
@@ -232,7 +236,31 @@ public class TextPane {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+    	    		System.out.println("NewGame is now "+newGame.toString());
+    	    		System.out.println("Current turn: "+newGame.allTurns.size());
 	    	    }
+	    	});
+	     
+
+	     // m6 = new JMenuItem("Refresh Board"); 
+	     m6.addActionListener(new ActionListener() {
+	    	    @Override
+	    	    public void actionPerformed(ActionEvent arg0) {
+	    	    	for (int i = 0; i < GoBoard.boardSize; i++) {
+    				    for (int j = 0; j < GoBoard.boardSize; j++) {
+    				    	GoBoard.board[i][j] = 0;
+    					}
+    				}
+	    	    	System.out.println("Board is now "+GoBoard.board.toString());
+	    	    	try {
+	    	    		GoBoard.refreshBoard(newGame, t);
+	    	    		TextPane.answerField.setText("Board Refreshed.");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	    	    }
+	    	    
 	    	});
 	}
 
