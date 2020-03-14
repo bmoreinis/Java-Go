@@ -156,7 +156,7 @@ public class GoBoard extends JPanel {
 
 	public static void refreshBoard(Game newGame, Component g) {
 		try {
-			click(0, 0);
+			click(50, 50);
 		} catch (AWTException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -202,20 +202,35 @@ public class GoBoard extends JPanel {
 
 	public static void prevBoard(Game newGame, Component g) {
 		int gameSize = newGame.allTurns.size();
-		Turn popTurn = newGame.allTurns.remove();
-		newGame.hanoiTurns.add(popTurn);
-		Location xy = popTurn.getCoordinates();
-		int x = (int) xy.x;
-		int y = (int) xy.y;
-		GoBoard.board[y][x] = gameSize;
-		if (popTurn.getCaptures() > 0) {
-			Location[] capturedStones = popTurn.getCapStones();
-			for (int s = 0; s < capturedStones.length; s++) {
-				x = capturedStones[s].x;
-				y = capturedStones[s].y;
-				System.out.println("Capture: " + x + "," + y);
-				GoBoard.board[y][x] = -1;
+		if (gameSize > 0) {
+			Turn popTurn = newGame.allTurns.remove();
+			newGame.hanoiTurns.add(popTurn);
+			Location xy = popTurn.getCoordinates();
+			int x = (int) xy.x;
+			int y = (int) xy.y;
+			GoBoard.board[y][x] = 0;
+			Turn hanoiTurn = newGame.hanoiTurns.peek();
+			if (hanoiTurn.getCaptures() > 0) {
+				Location[] capturedStones = hanoiTurn.getCapStones();
+				for (int s = 0; s < capturedStones.length; s++) {
+					x = capturedStones[s].x;
+					y = capturedStones[s].y;
+					System.out.println("Previous Capture: " + x + "," + y);
+					GoBoard.board[y][x] = 0;
+				}
 			}
+			if (popTurn.getCaptures() > 0) {
+				Location[] capturedStones = popTurn.getCapStones();
+				for (int s = 0; s < capturedStones.length; s++) {
+					x = capturedStones[s].x;
+					y = capturedStones[s].y;
+					System.out.println("Capture: " + x + "," + y);
+					GoBoard.board[y][x] = -1;
+				}
+			}
+		}
+		else {
+			System.out.println("All turns reversed.");
 		}
 		try {
 			click(50, 50);
